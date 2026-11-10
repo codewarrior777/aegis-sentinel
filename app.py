@@ -1,6 +1,6 @@
 """
 Aegis-Sentinel: AI Network Intrusion Detection System.
-Tactical Dashboard UI - Ultimate Radar & Flat Theme.
+Tactical Dashboard UI - Ultimate Radar & Flat Theme (Fixed).
 """
 
 import streamlit as st
@@ -211,7 +211,6 @@ with col_right:
     # Fila inferior del panel derecho: El Radar Épico
     st.markdown("### 📡 Network Radar")
     
-    # Generador de Radar Plotly
     fig_radar = go.Figure()
     
     # 1. Anillos concéntricos
@@ -228,11 +227,12 @@ with col_right:
             mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False
         ))
         
-    # 3. Haz de barrido (Sweep)
-    sweep_theta = np.linspace(45, 0, 20)
-    sweep_r = [1]*20
+    # 3. Haz de barrido (Sweep) - CORREGIDO
+    sweep_theta = np.linspace(45, 0, 20).tolist() # Convertimos a lista nativa de Python
+    sweep_r = [1] * 20                            # Lista nativa
+    
     fig_radar.add_trace(go.Scatterpolar(
-        r=[0] + sweep_r.tolist(), theta=[0] + sweep_theta.tolist(),
+        r=[0] + sweep_r, theta=[0] + sweep_theta,
         fill='toself', fillcolor='rgba(0, 243, 255, 0.15)', line=dict(color='rgba(0, 243, 255, 0)'),
         showlegend=False
     ))

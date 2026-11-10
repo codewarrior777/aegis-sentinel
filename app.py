@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import os
 from src.ids_engine import IDSEngine
+from src.data_generator import generate_traffic_data
 
 st.set_page_config(page_title="Aegis Sentinel", page_icon="🪖", layout="wide")
 
@@ -83,13 +84,18 @@ st.sidebar.warning(
 )
 
 # ==========================================
-# MODEL LOADING (Cache it)
+# MODEL LOADING (With Auto-Generation for Cloud)
 # ==========================================
 @st.cache_resource
 def load_model():
     engine = IDSEngine()
     # Busca el CSV en la raíz del proyecto
     dataset_path = os.path.join(os.path.dirname(__file__), "network_traffic.csv")
+    
+    # Si el archivo no existe (ej. en Streamlit Cloud), lo generamos automáticamente
+    if not os.path.exists(dataset_path):
+        generate_traffic_data()
+        
     if os.path.exists(dataset_path):
         engine.train(dataset_path)
     return engine
@@ -98,7 +104,7 @@ try:
     ids_engine = load_model()
     model_ready = True
 except Exception as e:
-    st.error(f"Failed to load AI model. Ensure `network_traffic.csv` exists in the root directory. Error: {e}")
+    st.error(f"Failed to load AI model. Error: {e}")
     model_ready = False
 
 # ==========================================
@@ -162,7 +168,6 @@ with col_output:
             height=300,
             margin=dict(l=20, r=20, t=50, b=20)
         )
-        # FIX aplicado: width="stretch"
         st.plotly_chart(fig, width="stretch")
         
         # Results output

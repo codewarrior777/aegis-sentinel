@@ -1,29 +1,26 @@
 # 🪖 Aegis-Sentinel: AI-Powered Network Intrusion Detection System
 
-[![Live Demo](https://img.shields.io/badge/demo-LIVE-brightgreen?style=for-the-badge&logo=streamlit)](TU_URL_DE_STREAMLIT)
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](TU_URL_DE_STREAMLIT)
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)
 [![Machine Learning](https://img.shields.io/badge/Domain-Cybersecurity%20%7C%20AI-red.svg)]()
 [![Scikit-Learn](https://img.shields.io/badge/Library-Scikit--Learn-orange.svg)]()
+[![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B.svg)]()
 
 A next-generation Network Intrusion Detection System (NIDS) that uses Machine Learning to identify and classify cyber threats in real-time.
 
-## 🌐 Try It Live
+## 📸 Tactical Dashboard Preview
 
-🔴 **[Open the Interactive Dashboard Here](TU_URL_DE_STREAMLIT)**
-
-No installation needed — just click and explore the tactical SOC dashboard in your browser.
+![Aegis Sentinel HUD](assets/aegis_hud.png)
 
 ## 🚨 The Problem & The Solution
 
 - **The Problem:** Traditional firewalls rely on static rules and signatures. They cannot detect zero-day attacks, sophisticated brute-force attempts, or anomalous network behavior.
-- **The Solution:** Aegis-Sentinel uses a **Random Forest Classifier** trained on network telemetry (connection duration, bytes transferred, failed logins, protocol type). It analyzes live network parameters and calculates a "Threat Level" probability.
+- **The Solution:** Aegis-Sentinel uses a **Random Forest Classifier** trained on network telemetry (connection duration, bytes transferred, failed logins, protocol type). It analyzes live network parameters and calculates a "Threat Level" probability, allowing SOC analysts to react instantly.
 
 ## 🧠 Core Features
 
-1. **Synthetic Data Generator:** Includes a module to simulate thousands of network connections (normal vs. malicious) to train the model safely.
+1. **Synthetic Data Generator:** Includes a module to simulate thousands of network connections (normal vs. malicious) to train the model safely without needing real network traffic.
 2. **AI Threat Engine:** Uses Scikit-Learn's Random Forest algorithm to achieve high accuracy in detecting DDoS and Brute Force attacks.
-3. **Tactical HUD:** A military-grade Streamlit dashboard with a real-time Gauge Chart (Threat Level).
+3. **Tactical HUD:** A military-grade Streamlit dashboard with a real-time Gauge Chart, Network Radar, and live Terminal Logs.
 4. **Cloud-Ready:** Automatically generates the training dataset on startup if the CSV is missing.
 
 ## 🏗️ System Architecture
@@ -40,6 +37,7 @@ graph TD
 
 ## 🚀 How to Run Locally
 
+### Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/codewarrior777/aegis-sentinel.git

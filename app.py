@@ -1,6 +1,6 @@
 """
 Aegis-Sentinel: AI Network Intrusion Detection System.
-Tactical Dashboard UI - Ultimate Radar & Flat Theme (Fixed).
+Tactical Dashboard UI - Flat Neon Blue Theme.
 """
 
 import streamlit as st
@@ -115,14 +115,18 @@ if "threats_blocked" not in st.session_state:
     st.session_state.threats_blocked = 12
 
 # ==========================================
-# MODEL LOADING
+# MODEL LOADING (MLOps Integration)
 # ==========================================
 @st.cache_resource
 def load_model():
     engine = IDSEngine()
     dataset_path = os.path.join(os.path.dirname(__file__), "network_traffic.csv")
+    
+    # Generar dataset si no existe (para Streamlit Cloud)
     if not os.path.exists(dataset_path):
         generate_traffic_data()
+        
+    # El método train ahora guarda y carga desde joblib automáticamente
     if os.path.exists(dataset_path):
         engine.train(dataset_path)
     return engine
@@ -148,7 +152,7 @@ m4.metric("AI Confidence", "99.8%", delta="Optimal")
 st.divider()
 
 # ==========================================
-# LAYOUT: 2 COLUMNS (Inputs Left, Results+Radar Right)
+# LAYOUT: 2 COLUMNS
 # ==========================================
 col_left, col_right = st.columns([1, 1.5], gap="large")
 
@@ -227,9 +231,9 @@ with col_right:
             mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False
         ))
         
-    # 3. Haz de barrido (Sweep) - CORREGIDO
-    sweep_theta = np.linspace(45, 0, 20).tolist() # Convertimos a lista nativa de Python
-    sweep_r = [1] * 20                            # Lista nativa
+    # 3. Haz de barrido (Sweep) - Corregido
+    sweep_theta = np.linspace(45, 0, 20).tolist()
+    sweep_r = [1] * 20
     
     fig_radar.add_trace(go.Scatterpolar(
         r=[0] + sweep_r, theta=[0] + sweep_theta,

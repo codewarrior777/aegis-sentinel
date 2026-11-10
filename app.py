@@ -119,7 +119,7 @@ with col_left:
         showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
     )
     radar_placeholder = st.empty()
-    radar_placeholder.plotly_chart(fig_radar, width="stretch")
+    radar_placeholder.plotly_chart(fig_radar, width="stretch", key="radar_chart_main")
 
 with col_right:
     st.markdown("### 🖥️ Threat Analysis")
@@ -165,13 +165,12 @@ with col_right:
                 gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
             ))
             fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
-            gauge_placeholder.plotly_chart(fig, width="stretch")
+            gauge_placeholder.plotly_chart(fig, width="stretch", key="gauge_chart_live")
             
             if current_pred == 1:
-                # Usamos alert_placeholder para que se reemplace, no se apile
                 alert_placeholder.markdown('<div class="alert-critical">🚨 INTRUSION DETECTED!<br>Action: Dropping packet and blocking source IP.</div>', unsafe_allow_html=True)
                 fig_radar.add_trace(go.Scatterpolar(r=[0.6, 0.8, 0.4], theta=[150, 220, 300], mode='markers', marker=dict(color='#ff003c', size=[14, 16, 12], symbol='x'), showlegend=False))
-                radar_placeholder.plotly_chart(fig_radar, width="stretch")
+                radar_placeholder.plotly_chart(fig_radar, width="stretch", key="radar_chart_live")
             else:
                 alert_placeholder.markdown('<div class="alert-safe">✅ CONNECTION NORMAL<br>Action: Allow traffic.</div>', unsafe_allow_html=True)
                 
@@ -186,7 +185,7 @@ with col_right:
             gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
         ))
         fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
-        gauge_placeholder.plotly_chart(fig, width="stretch")
+        gauge_placeholder.plotly_chart(fig, width="stretch", key="gauge_chart_manual")
         
         if current_pred == 1:
             alert_placeholder.markdown('<div class="alert-critical">🚨 INTRUSION DETECTED!<br>Action: Dropping packet and blocking source IP.</div>', unsafe_allow_html=True)
@@ -205,7 +204,7 @@ if current_pred == 1:
         st.write("Why did the AI flag this? Top contributing features:")
         importances = ids_engine.get_feature_importances()
         
-        # Traducimos los nombres técnicos a nombres legibles para el humano
+        # Traducimos los nombres técnicos a nombres legibles
         human_names = {
             'protocol_type_encoded': 'Protocol Type',
             'duration': 'Connection Duration',
@@ -220,7 +219,7 @@ if current_pred == 1:
         
         fig_xai = px.bar(df_imp, x='Importance', y='Feature', orientation='h', color_discrete_sequence=['#8a2be2'])
         fig_xai.update_layout(paper_bgcolor="#0b132b", plot_bgcolor="#1c2541", font_color="#ffffff", height=250, margin=dict(l=10, r=10, t=10, b=10))
-        st.plotly_chart(fig_xai, width="stretch")
+        st.plotly_chart(fig_xai, width="stretch", key="xai_chart")
         
     with col_soar:
         st.markdown("### 📁 Automated Incident Response (SOAR)")

@@ -1,6 +1,6 @@
 # 🪖 Aegis-Sentinel: AI-Powered Network Intrusion Detection System
 
-[![Live Demo](https://img.shields.io/badge/demo-LIVE-brightgreen?style=for-the-badge&logo=streamlit)](TU_URL_DE_STREAMLIT_AQUI)
+[![Live Demo](https://img.shields.io/badge/demo-LIVE-brightgreen?style=for-the-badge&logo=streamlit)](https://aegis-sentinel-jypzprgmx9pgopmmygxseq.streamlit.app/)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)](https://github.com/codewarrior777/aegis-sentinel)
 [![CI Pipeline](https://github.com/codewarrior777/aegis-sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/codewarrior777/aegis-sentinel/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-3%20passing-brightgreen)](https://github.com/codewarrior777/aegis-sentinel)
@@ -12,7 +12,7 @@ A next-generation Network Intrusion Detection System (NIDS) that uses Machine Le
 
 ## 🌐 Try It Live
 
-🔴 **[Open the Interactive Dashboard Here](TU_URL_DE_STREAMLIT_AQUI)**
+🔴 **[Open the Interactive Dashboard Here](https://aegis-sentinel-jypzprgmx9pgopmmygxseq.streamlit.app/)**
 
 No installation needed — just click and explore the tactical SOC dashboard in your browser.
 

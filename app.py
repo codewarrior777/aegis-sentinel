@@ -162,7 +162,8 @@ with col_output:
             height=300,
             margin=dict(l=20, r=20, t=50, b=20)
         )
-        st.plotly_chart(fig, use_container_width=True)
+        # FIX aplicado: width="stretch"
+        st.plotly_chart(fig, width="stretch")
         
         # Results output
         if prediction == 1:

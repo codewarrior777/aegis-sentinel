@@ -1,7 +1,8 @@
 # 🪖 Aegis-Sentinel: AI-Powered Network Intrusion Detection System
 
-[![Live Demo](https://img.shields.io/badge/demo-LIVE-brightgreen?style=for-the-badge&logo=streamlit)](https://aegis-sentinel-jypzprgmx9pgopmmygxseq.streamlit.app/)
+[![Live Demo](https://img.shields.io/badge/demo-LIVE-brightgreen?style=for-the-badge&logo=streamlit)](TU_URL_DE_STREAMLIT_AQUI)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)](https://github.com/codewarrior777/aegis-sentinel)
+[![CI Pipeline](https://github.com/codewarrior777/aegis-sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/codewarrior777/aegis-sentinel/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-3%20passing-brightgreen)](https://github.com/codewarrior777/aegis-sentinel)
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)
 [![Machine Learning](https://img.shields.io/badge/Domain-Cybersecurity%20%7C%20AI-red.svg)]()
@@ -11,13 +12,17 @@ A next-generation Network Intrusion Detection System (NIDS) that uses Machine Le
 
 ## 🌐 Try It Live
 
-🔴 **[Open the Interactive Dashboard Here](https://aegis-sentinel-jypzprgmx9pgopmmygxseq.streamlit.app/)**
+🔴 **[Open the Interactive Dashboard Here](TU_URL_DE_STREAMLIT_AQUI)**
 
 No installation needed — just click and explore the tactical SOC dashboard in your browser.
 
 ## 📸 Tactical Dashboard Preview
 
-![Aegis Sentinel HUD](assets/aegis.png)
+### 1. AI Threat Detection & Network Radar
+![Aegis Sentinel HUD 1](assets/aegis_hud1.png)
+
+### 2. Explainable AI (XAI) & Automated Incident Response (SOAR)
+![Aegis Sentinel HUD 2](assets/aegis_hud2.png)
 
 ## 🚨 The Problem & The Solution
 
@@ -29,8 +34,12 @@ No installation needed — just click and explore the tactical SOC dashboard in 
 1. **Machine Learning Engine:** Uses Scikit-Learn's Random Forest algorithm to achieve high accuracy in detecting DDoS and Brute Force attacks.
 2. **MLOps Persistence:** The trained AI model is saved to disk (`joblib`) to prevent unnecessary re-training on every app restart, saving compute resources.
 3. **Automated Testing (QA):** Includes a `pytest` suite that validates the model's accuracy and ensures the API returns correct predictions.
-4. **Dockerized (DevOps):** Fully containerized environment. The app can be deployed on any cloud provider (AWS, GCP, Azure) using the provided `Dockerfile`.
-5. **Tactical HUD:** A military-grade Streamlit dashboard with a real-time Gauge Chart, Network Radar, and live Terminal Logs.
+4. **CI/CD Pipeline:** GitHub Actions workflow automatically runs tests on every push.
+5. **Dockerized (DevOps):** Fully containerized environment. The app can be deployed on any cloud provider (AWS, GCP, Azure) using the provided `Dockerfile`.
+6. **Explainable AI (XAI):** Visualizes feature importance to explain *why* the AI flagged a connection.
+7. **SOAR (Incident Response):** Automatically generates a downloadable JSON incident report for SOC documentation.
+8. **Tactical HUD:** A military-grade Streamlit dashboard with a real-time Gauge Chart, Network Radar, and live Terminal Logs.
+9. **Live Simulation:** A built-in traffic generator that simulates real-time network monitoring and attack interception.
 
 ## 🏗️ System Architecture
 
@@ -42,19 +51,27 @@ graph TD
     H -->|Loads Model| D[IDS Engine]
     D -->|Predicts Probability| E[Streamlit Tactical Dashboard]
     E -->|User Inputs Telemetry| D
-    E -->|Actionable Alerts| F[SOC Analyst]
+    E -->|Explainability| F[XAI Feature Importance]
+    E -->|Incident Report| G[SOAR JSON Export]
+    E -->|Actionable Alerts| I[SOC Analyst]
     
     style A fill:#0b132b,stroke:#00f3ff,stroke-width:2px,color:#fff
     style H fill:#0b132b,stroke:#8a2be2,stroke-width:2px,color:#fff
     style E fill:#0b132b,stroke:#00f3ff,stroke-width:2px,color:#fff
+    style F fill:#0b132b,stroke:#00ff41,stroke-width:2px,color:#fff
+    style G fill:#0b132b,stroke:#ff003c,stroke-width:2px,color:#fff
 ```
 
 ## 📁 Project Structure
 
 ```text
 aegis-sentinel/
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # CI/CD Pipeline (GitHub Actions)
 ├── assets/
-│   └── aegis.png              # Dashboard screenshot
+│   ├── aegis_hud1.png         # Dashboard screenshot
+│   └── aegis_hud2.png         # XAI & SOAR screenshot
 ├── src/
 │   ├── data_generator.py      # Simulates normal and malicious network traffic
 │   └── ids_engine.py          # Random Forest model & MLOps logic (joblib)

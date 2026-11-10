@@ -1,6 +1,6 @@
 """
 AI Engine for Aegis-Sentinel.
-Trains a Random Forest model and saves it to disk (MLOps).
+Trains a Random Forest model, saves it to disk (MLOps), and provides XAI.
 """
 
 import os
@@ -81,3 +81,16 @@ class IDSEngine:
         probability = self.model.predict_proba(input_data)[0][1]
         
         return prediction, probability
+
+    # --- MÉTODO CORREGIDO AQUÍ ---
+    def get_feature_importances(self):
+        """Retorna la importancia de cada característica para el modelo (XAI)."""
+        if not self.is_trained:
+            return {}
+            
+        features = ['duration', 'src_bytes', 'dst_bytes', 'failed_logins', 'protocol_type_encoded', 'count']
+        importances = self.model.feature_importances_
+        
+        # Creamos un diccionario y lo ordenamos de mayor a menor
+        feat_imp = {features[i]: importances[i] for i in range(len(features))}
+        return dict(sorted(feat_imp.items(), key=lambda item: item[1], reverse=True))

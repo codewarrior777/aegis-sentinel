@@ -1,6 +1,6 @@
 """
 Aegis-Sentinel: AI Network Intrusion Detection System.
-Ultimate God Level - Fixed Radar Reactivity.
+Ultimate God Level - Fixed Gauge Layout.
 """
 
 import streamlit as st
@@ -87,6 +87,35 @@ col_left, col_right = st.columns([1, 1.2], gap="large")
 
 current_pred, current_prob = None, None
 
+# Función auxiliar para crear la aguja perfecta sin desbordarse
+def create_gauge(prob, pred):
+    color = "#ff003c" if pred == 1 else "#00f3ff"
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number", 
+        value = prob * 100,
+        number = {'font': {'size': 45, 'color': '#ffffff'}},
+        title = {'text': "Threat Level (%)", 'font': {'color': '#ffffff', 'size': 16}},
+        gauge = {
+            'axis': {'range': [None, 100], 'tickcolor': "#ffffff", 'tickfont': {'size': 10}},
+            'bar': {'color': color}, 
+            'bgcolor': "#1c2541",
+            'borderwidth': 2,
+            'bordercolor': "#3a506b",
+            'steps': [
+                {'range': [0, 40], 'color': 'rgba(0, 243, 255, 0.2)'},
+                {'range': [40, 70], 'color': 'rgba(138, 43, 226, 0.2)'},
+                {'range': [70, 100], 'color': 'rgba(255, 0, 60, 0.2)'}
+            ]
+        }
+    ))
+    # Margen ajustado para que el 100 no se salga
+    fig.update_layout(
+        paper_bgcolor="#0b132b", 
+        height=200, 
+        margin=dict(l=20, r=20, t=40, b=10)
+    )
+    return fig
+
 with col_left:
     st.markdown("### 📡 Connection Telemetry")
     duration = st.number_input("Duration (sec)", min_value=0.0, value=10.0, step=0.1)
@@ -102,7 +131,7 @@ with col_left:
     with col_btn2:
         live_btn = st.button("⚡ LIVE SIMULATION")
     
-    # Placeholder para el Radar (se llenará al final)
+    # Placeholder para el Radar
     st.markdown("### 📡 Network Radar")
     radar_placeholder = st.empty()
 
@@ -143,33 +172,25 @@ with col_right:
                 
             current_pred, current_prob = process_scan(d, s, de, fl, "TCP", c)
             
-            # Actualizamos Radar y Aguja en vivo
+            # Radar en vivo
             fig_radar = go.Figure()
             for r in [0.25, 0.5, 0.75, 1.0]:
                 fig_radar.add_trace(go.Scatterpolar(r=[r]*100, theta=np.linspace(0, 360, 100), mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
             for theta in [0, 90, 180, 270]:
                 fig_radar.add_trace(go.Scatterpolar(r=[0, 1], theta=[theta, theta], mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
-            
             sweep_theta = np.linspace(45, 0, 20).tolist()
             fig_radar.add_trace(go.Scatterpolar(r=[0] + [1]*20, theta=[0] + sweep_theta, fill='toself', fillcolor='rgba(0, 243, 255, 0.15)', line=dict(color='rgba(0, 243, 255, 0)'), showlegend=False))
             fig_radar.add_trace(go.Scatterpolar(r=[0.3, 0.7, 0.5, 0.9, 0.4, 0.8], theta=[45, 120, 200, 280, 330, 15], mode='markers', marker=dict(color='#00ff41', size=[6, 8, 5, 10, 4, 7]), showlegend=False))
-            
             if current_pred == 1:
                 fig_radar.add_trace(go.Scatterpolar(r=[0.6, 0.8, 0.4], theta=[150, 220, 300], mode='markers', marker=dict(color='#ff003c', size=[14, 16, 12], symbol='x'), showlegend=False))
-                
             fig_radar.update_layout(
                 polar=dict(radialaxis=dict(visible=False, range=[0, 1]), angularaxis=dict(visible=False), bgcolor='#0b132b'),
                 showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
             )
             radar_placeholder.plotly_chart(fig_radar, width="stretch", key=f"radar_live_{i}")
             
-            gauge_color = "#ff003c" if current_pred == 1 else "#00f3ff"
-            fig = go.Figure(go.Indicator(
-                mode = "gauge+number", value = current_prob * 100,
-                title = {'text': "Threat Level (%)", 'font': {'color': '#ffffff'}},
-                gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
-            ))
-            fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
+            # Aguja en vivo (usando la función create_gauge)
+            fig = create_gauge(current_prob, current_pred)
             gauge_placeholder.plotly_chart(fig, width="stretch", key=f"gauge_live_{i}")
             
             if current_pred == 1:
@@ -181,13 +202,7 @@ with col_right:
         live_status_placeholder.empty()
 
     if scan_btn and current_pred is not None:
-        gauge_color = "#ff003c" if current_pred == 1 else "#00f3ff"
-        fig = go.Figure(go.Indicator(
-            mode = "gauge+number", value = current_prob * 100,
-            title = {'text': "Threat Level (%)", 'font': {'color': '#ffffff'}},
-            gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
-        ))
-        fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
+        fig = create_gauge(current_prob, current_pred)
         gauge_placeholder.plotly_chart(fig, width="stretch", key="gauge_manual")
         
         if current_pred == 1:
@@ -196,7 +211,7 @@ with col_right:
             alert_placeholder.markdown('<div class="alert-safe">✅ CONNECTION NORMAL<br>Action: Allow traffic.</div>', unsafe_allow_html=True)
 
 # ==========================================
-# DIBUJAR EL RADAR (Al final para que se actualice bien)
+# DIBUJAR EL RADAR (Manual)
 # ==========================================
 fig_radar = go.Figure()
 for r in [0.25, 0.5, 0.75, 1.0]:
@@ -215,7 +230,7 @@ fig_radar.update_layout(
     showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
 )
 
-if not (live_btn and model_ready): # Si no es live, dibujamos el radar estático actualizado
+if not (live_btn and model_ready):
     radar_placeholder.plotly_chart(fig_radar, width="stretch", key="radar_manual_final")
 
 # ==========================================

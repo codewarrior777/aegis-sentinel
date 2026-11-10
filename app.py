@@ -1,6 +1,6 @@
 """
 Aegis-Sentinel: AI Network Intrusion Detection System.
-Ultimate God Level - Live Simulation, XAI, SOAR, and Tactical Radar.
+Ultimate God Level - Perfect Layout & Human-Readable XAI.
 """
 
 import streamlit as st
@@ -18,70 +18,21 @@ from src.data_generator import generate_traffic_data
 st.set_page_config(page_title="Aegis Sentinel", page_icon="🪖", layout="wide")
 
 # ==========================================
-# 🎨 FLAT NEON BLUE THEME (NO SHADOWS)
+# 🎨 FLAT NEON BLUE THEME
 # ==========================================
 flat_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
-.stApp {
-    background-color: #0b132b;
-    color: #ffffff;
-    font-family: 'Share Tech Mono', monospace;
-}
-
+.stApp { background-color: #0b132b; color: #ffffff; font-family: 'Share Tech Mono', monospace; }
 h1 { color: #00f3ff !important; text-transform: uppercase; border-bottom: 2px solid #8a2be2; padding-bottom: 10px; }
 h2, h3 { color: #00f3ff !important; text-transform: uppercase; }
-
-.stButton > button {
-    background-color: #1a3b5c !important;
-    color: #ffffff !important;
-    border: 2px solid #00f3ff !important;
-    border-radius: 4px !important;
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: all 0.2s ease !important;
-    width: 100%;
-    font-size: 15px;
-}
+.stButton > button { background-color: #1a3b5c !important; color: #ffffff !important; border: 2px solid #00f3ff !important; border-radius: 4px !important; text-transform: uppercase; font-weight: bold; width: 100%; font-size: 15px; }
 .stButton > button:hover { background-color: #00f3ff !important; color: #000000 !important; }
-
-div[data-testid="stMetric"] {
-    background-color: #1c2541;
-    border: 1px solid #3a506b;
-    border-left: 5px solid #8a2be2;
-    padding: 15px;
-}
+div[data-testid="stMetric"] { background-color: #1c2541; border: 1px solid #3a506b; border-left: 5px solid #8a2be2; padding: 15px; }
 div[data-testid="stMetricValue"] { color: #00f3ff !important; }
-
-.alert-critical {
-    background-color: #3b000a;
-    border: 2px solid #ff003c;
-    color: #ffffff;
-    padding: 15px;
-    border-radius: 4px;
-    font-weight: bold;
-    text-align: center;
-}
-.alert-safe {
-    background-color: #002233;
-    border: 2px solid #00f3ff;
-    color: #ffffff;
-    padding: 15px;
-    border-radius: 4px;
-    font-weight: bold;
-    text-align: center;
-}
-
-.terminal-window {
-    background-color: #000000;
-    border: 2px solid #3a506b;
-    padding: 15px;
-    height: 160px;
-    overflow-y: auto;
-    font-size: 14px;
-    color: #ffffff;
-}
+.alert-critical { background-color: #3b000a; border: 2px solid #ff003c; color: #ffffff; padding: 15px; border-radius: 4px; font-weight: bold; text-align: center; }
+.alert-safe { background-color: #002233; border: 2px solid #00f3ff; color: #ffffff; padding: 15px; border-radius: 4px; font-weight: bold; text-align: center; }
+.terminal-window { background-color: #000000; border: 2px solid #3a506b; padding: 15px; height: 160px; overflow-y: auto; font-size: 14px; color: #ffffff; }
 .log-line { margin-bottom: 5px; }
 .log-warn { color: #ff003c; font-weight: bold; }
 .log-success { color: #00ff41; font-weight: bold; }
@@ -132,7 +83,9 @@ st.divider()
 # ==========================================
 # LAYOUT
 # ==========================================
-col_left, col_right = st.columns([1, 1.5], gap="large")
+col_left, col_right = st.columns([1, 1.2], gap="large")
+
+current_pred, current_prob = None, None
 
 with col_left:
     st.markdown("### 📡 Connection Telemetry")
@@ -147,17 +100,33 @@ with col_left:
     with col_btn1:
         scan_btn = st.button("🚀 INSPECT PACKET", type="primary")
     with col_btn2:
-        live_btn = st.button("⚡ START LIVE SIMULATION")
+        live_btn = st.button("⚡ LIVE SIMULATION")
+
+    # Radar
+    st.markdown("### 📡 Network Radar")
+    fig_radar = go.Figure()
+    for r in [0.25, 0.5, 0.75, 1.0]:
+        fig_radar.add_trace(go.Scatterpolar(r=[r]*100, theta=np.linspace(0, 360, 100), mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
+    for theta in [0, 90, 180, 270]:
+        fig_radar.add_trace(go.Scatterpolar(r=[0, 1], theta=[theta, theta], mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
+    
+    sweep_theta = np.linspace(45, 0, 20).tolist()
+    fig_radar.add_trace(go.Scatterpolar(r=[0] + [1]*20, theta=[0] + sweep_theta, fill='toself', fillcolor='rgba(0, 243, 255, 0.15)', line=dict(color='rgba(0, 243, 255, 0)'), showlegend=False))
+    fig_radar.add_trace(go.Scatterpolar(r=[0.3, 0.7, 0.5, 0.9, 0.4, 0.8], theta=[45, 120, 200, 280, 330, 15], mode='markers', marker=dict(color='#00ff41', size=[6, 8, 5, 10, 4, 7]), showlegend=False))
+    
+    fig_radar.update_layout(
+        polar=dict(radialaxis=dict(visible=False, range=[0, 1]), angularaxis=dict(visible=False), bgcolor='#0b132b'),
+        showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
+    )
+    radar_placeholder = st.empty()
+    radar_placeholder.plotly_chart(fig_radar, width="stretch")
 
 with col_right:
     st.markdown("### 🖥️ Threat Analysis")
     
-    # Función para procesar un escaneo
     def process_scan(dur, src, dst, f_log, proto, cnt):
         st.session_state.total_scans += 1
         pred, prob = ids_engine.predict(dur, src, dst, f_log, proto, cnt)
-        
-        # Guardar Incidente si es ataque (SOAR)
         if pred == 1:
             st.session_state.threats_blocked += 1
             incident = {
@@ -167,10 +136,11 @@ with col_right:
                 "Threat_Prob": f"{prob*100:.2f}%"
             }
             st.session_state.incident_logs.append(incident)
-            
         return pred, prob
 
-    current_pred, current_prob = None, None
+    gauge_placeholder = st.empty()
+    alert_placeholder = st.empty()
+    live_status_placeholder = st.empty()
 
     if scan_btn and model_ready:
         with st.spinner("AI Analyzing..."):
@@ -178,9 +148,8 @@ with col_right:
             current_pred, current_prob = process_scan(duration, src_bytes, dst_bytes, failed_logins, protocol, count)
             
     elif live_btn and model_ready:
-        st.info("⚡ LIVE SIMULATION RUNNING... Monitoring traffic...")
-        # Simulador de tráfico en vivo
-        for _ in range(5):
+        for i in range(6):
+            live_status_placeholder.info(f"⚡ LIVE SIMULATION RUNNING... Packet {i+1}/6...")
             is_attack = random.choice([False, False, True]) 
             if is_attack:
                 d, s, de, fl, c = 0.5, 50, 20, random.randint(10, 50), random.randint(100, 500)
@@ -188,61 +157,41 @@ with col_right:
                 d, s, de, fl, c = random.uniform(5, 15), 500, 1000, 0, random.randint(1, 5)
                 
             current_pred, current_prob = process_scan(d, s, de, fl, "TCP", c)
+            
+            gauge_color = "#ff003c" if current_pred == 1 else "#00f3ff"
+            fig = go.Figure(go.Indicator(
+                mode = "gauge+number", value = current_prob * 100,
+                title = {'text': "Threat Level (%)", 'font': {'color': '#ffffff'}},
+                gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
+            ))
+            fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
+            gauge_placeholder.plotly_chart(fig, width="stretch")
+            
             if current_pred == 1:
-                st.error("🚨 INTRUSION DETECTED IN LIVE TRAFFIC!")
-            time.sleep(0.8)
+                # Usamos alert_placeholder para que se reemplace, no se apile
+                alert_placeholder.markdown('<div class="alert-critical">🚨 INTRUSION DETECTED!<br>Action: Dropping packet and blocking source IP.</div>', unsafe_allow_html=True)
+                fig_radar.add_trace(go.Scatterpolar(r=[0.6, 0.8, 0.4], theta=[150, 220, 300], mode='markers', marker=dict(color='#ff003c', size=[14, 16, 12], symbol='x'), showlegend=False))
+                radar_placeholder.plotly_chart(fig_radar, width="stretch")
+            else:
+                alert_placeholder.markdown('<div class="alert-safe">✅ CONNECTION NORMAL<br>Action: Allow traffic.</div>', unsafe_allow_html=True)
+                
+            time.sleep(1)
+        live_status_placeholder.empty()
 
-    # Mostrar Resultados (Aguja)
-    if current_pred is not None:
+    if scan_btn and current_pred is not None:
         gauge_color = "#ff003c" if current_pred == 1 else "#00f3ff"
         fig = go.Figure(go.Indicator(
             mode = "gauge+number", value = current_prob * 100,
             title = {'text': "Threat Level (%)", 'font': {'color': '#ffffff'}},
-            gauge = {
-                'axis': {'range': [None, 100], 'tickcolor': "#ffffff"},
-                'bar': {'color': gauge_color}, 'bgcolor': "#1c2541",
-                'steps': [
-                    {'range': [0, 40], 'color': 'rgba(0, 243, 255, 0.2)'},
-                    {'range': [40, 70], 'color': 'rgba(138, 43, 226, 0.2)'},
-                    {'range': [70, 100], 'color': 'rgba(255, 0, 60, 0.2)'}],
-            }
+            gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
         ))
         fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
-        st.plotly_chart(fig, width="stretch")
+        gauge_placeholder.plotly_chart(fig, width="stretch")
         
         if current_pred == 1:
-            st.markdown('<div class="alert-critical">🚨 INTRUSION DETECTED!<br>Action: Dropping packet and blocking source IP.</div>', unsafe_allow_html=True)
+            alert_placeholder.markdown('<div class="alert-critical">🚨 INTRUSION DETECTED!<br>Action: Dropping packet and blocking source IP.</div>', unsafe_allow_html=True)
         else:
-            st.markdown('<div class="alert-safe">✅ CONNECTION NORMAL<br>Action: Allow traffic.</div>', unsafe_allow_html=True)
-    else:
-        st.info("💡 **STANDBY MODE:** Awaiting network telemetry.")
-
-    # --- RED RADAR TACTICS ---
-    st.markdown("### 📡 Network Radar")
-    fig_radar = go.Figure()
-    
-    # Anillos y líneas
-    for r in [0.25, 0.5, 0.75, 1.0]:
-        fig_radar.add_trace(go.Scatterpolar(r=[r]*100, theta=np.linspace(0, 360, 100), mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
-    for theta in [0, 90, 180, 270]:
-        fig_radar.add_trace(go.Scatterpolar(r=[0, 1], theta=[theta, theta], mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
-        
-    # Haz de barrido
-    sweep_theta = np.linspace(45, 0, 20).tolist()
-    fig_radar.add_trace(go.Scatterpolar(r=[0] + [1]*20, theta=[0] + sweep_theta, fill='toself', fillcolor='rgba(0, 243, 255, 0.15)', line=dict(color='rgba(0, 243, 255, 0)'), showlegend=False))
-    
-    # Blips normales
-    fig_radar.add_trace(go.Scatterpolar(r=[0.3, 0.7, 0.5, 0.9, 0.4, 0.8], theta=[45, 120, 200, 280, 330, 15], mode='markers', marker=dict(color='#00ff41', size=[6, 8, 5, 10, 4, 7]), showlegend=False))
-    
-    # Blips de ataque
-    if current_pred == 1:
-        fig_radar.add_trace(go.Scatterpolar(r=[0.6, 0.8, 0.4], theta=[150, 220, 300], mode='markers', marker=dict(color='#ff003c', size=[14, 16, 12], symbol='x'), showlegend=False))
-
-    fig_radar.update_layout(
-        polar=dict(radialaxis=dict(visible=False, range=[0, 1]), angularaxis=dict(visible=False), bgcolor='#0b132b'),
-        showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
-    )
-    st.plotly_chart(fig_radar, width="stretch")
+            alert_placeholder.markdown('<div class="alert-safe">✅ CONNECTION NORMAL<br>Action: Allow traffic.</div>', unsafe_allow_html=True)
 
 # ==========================================
 # EXPLAINABLE AI (XAI) & SOAR
@@ -255,9 +204,22 @@ if current_pred == 1:
         st.markdown("### 🧠 AI Explainability (XAI)")
         st.write("Why did the AI flag this? Top contributing features:")
         importances = ids_engine.get_feature_importances()
+        
+        # Traducimos los nombres técnicos a nombres legibles para el humano
+        human_names = {
+            'protocol_type_encoded': 'Protocol Type',
+            'duration': 'Connection Duration',
+            'failed_logins': 'Failed Logins',
+            'src_bytes': 'Source Bytes',
+            'dst_bytes': 'Destination Bytes',
+            'count': 'Connection Count'
+        }
+        
         df_imp = pd.DataFrame(list(importances.items()), columns=['Feature', 'Importance'])
+        df_imp['Feature'] = df_imp['Feature'].map(human_names)
+        
         fig_xai = px.bar(df_imp, x='Importance', y='Feature', orientation='h', color_discrete_sequence=['#8a2be2'])
-        fig_xai.update_layout(paper_bgcolor="#0b132b", plot_bgcolor="#1c2541", font_color="#ffffff", height=250)
+        fig_xai.update_layout(paper_bgcolor="#0b132b", plot_bgcolor="#1c2541", font_color="#ffffff", height=250, margin=dict(l=10, r=10, t=10, b=10))
         st.plotly_chart(fig_xai, width="stretch")
         
     with col_soar:

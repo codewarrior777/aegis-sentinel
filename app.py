@@ -1,6 +1,6 @@
 """
 Aegis-Sentinel: AI Network Intrusion Detection System.
-Ultimate God Level - Perfect Layout & Human-Readable XAI.
+Ultimate God Level - Fixed Radar Reactivity.
 """
 
 import streamlit as st
@@ -101,25 +101,10 @@ with col_left:
         scan_btn = st.button("🚀 INSPECT PACKET", type="primary")
     with col_btn2:
         live_btn = st.button("⚡ LIVE SIMULATION")
-
-    # Radar
+    
+    # Placeholder para el Radar (se llenará al final)
     st.markdown("### 📡 Network Radar")
-    fig_radar = go.Figure()
-    for r in [0.25, 0.5, 0.75, 1.0]:
-        fig_radar.add_trace(go.Scatterpolar(r=[r]*100, theta=np.linspace(0, 360, 100), mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
-    for theta in [0, 90, 180, 270]:
-        fig_radar.add_trace(go.Scatterpolar(r=[0, 1], theta=[theta, theta], mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
-    
-    sweep_theta = np.linspace(45, 0, 20).tolist()
-    fig_radar.add_trace(go.Scatterpolar(r=[0] + [1]*20, theta=[0] + sweep_theta, fill='toself', fillcolor='rgba(0, 243, 255, 0.15)', line=dict(color='rgba(0, 243, 255, 0)'), showlegend=False))
-    fig_radar.add_trace(go.Scatterpolar(r=[0.3, 0.7, 0.5, 0.9, 0.4, 0.8], theta=[45, 120, 200, 280, 330, 15], mode='markers', marker=dict(color='#00ff41', size=[6, 8, 5, 10, 4, 7]), showlegend=False))
-    
-    fig_radar.update_layout(
-        polar=dict(radialaxis=dict(visible=False, range=[0, 1]), angularaxis=dict(visible=False), bgcolor='#0b132b'),
-        showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
-    )
     radar_placeholder = st.empty()
-    radar_placeholder.plotly_chart(fig_radar, width="stretch", key="radar_chart_main")
 
 with col_right:
     st.markdown("### 🖥️ Threat Analysis")
@@ -158,6 +143,26 @@ with col_right:
                 
             current_pred, current_prob = process_scan(d, s, de, fl, "TCP", c)
             
+            # Actualizamos Radar y Aguja en vivo
+            fig_radar = go.Figure()
+            for r in [0.25, 0.5, 0.75, 1.0]:
+                fig_radar.add_trace(go.Scatterpolar(r=[r]*100, theta=np.linspace(0, 360, 100), mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
+            for theta in [0, 90, 180, 270]:
+                fig_radar.add_trace(go.Scatterpolar(r=[0, 1], theta=[theta, theta], mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
+            
+            sweep_theta = np.linspace(45, 0, 20).tolist()
+            fig_radar.add_trace(go.Scatterpolar(r=[0] + [1]*20, theta=[0] + sweep_theta, fill='toself', fillcolor='rgba(0, 243, 255, 0.15)', line=dict(color='rgba(0, 243, 255, 0)'), showlegend=False))
+            fig_radar.add_trace(go.Scatterpolar(r=[0.3, 0.7, 0.5, 0.9, 0.4, 0.8], theta=[45, 120, 200, 280, 330, 15], mode='markers', marker=dict(color='#00ff41', size=[6, 8, 5, 10, 4, 7]), showlegend=False))
+            
+            if current_pred == 1:
+                fig_radar.add_trace(go.Scatterpolar(r=[0.6, 0.8, 0.4], theta=[150, 220, 300], mode='markers', marker=dict(color='#ff003c', size=[14, 16, 12], symbol='x'), showlegend=False))
+                
+            fig_radar.update_layout(
+                polar=dict(radialaxis=dict(visible=False, range=[0, 1]), angularaxis=dict(visible=False), bgcolor='#0b132b'),
+                showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
+            )
+            radar_placeholder.plotly_chart(fig_radar, width="stretch", key=f"radar_live_{i}")
+            
             gauge_color = "#ff003c" if current_pred == 1 else "#00f3ff"
             fig = go.Figure(go.Indicator(
                 mode = "gauge+number", value = current_prob * 100,
@@ -165,12 +170,10 @@ with col_right:
                 gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
             ))
             fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
-            gauge_placeholder.plotly_chart(fig, width="stretch", key="gauge_chart_live")
+            gauge_placeholder.plotly_chart(fig, width="stretch", key=f"gauge_live_{i}")
             
             if current_pred == 1:
                 alert_placeholder.markdown('<div class="alert-critical">🚨 INTRUSION DETECTED!<br>Action: Dropping packet and blocking source IP.</div>', unsafe_allow_html=True)
-                fig_radar.add_trace(go.Scatterpolar(r=[0.6, 0.8, 0.4], theta=[150, 220, 300], mode='markers', marker=dict(color='#ff003c', size=[14, 16, 12], symbol='x'), showlegend=False))
-                radar_placeholder.plotly_chart(fig_radar, width="stretch", key="radar_chart_live")
             else:
                 alert_placeholder.markdown('<div class="alert-safe">✅ CONNECTION NORMAL<br>Action: Allow traffic.</div>', unsafe_allow_html=True)
                 
@@ -185,12 +188,35 @@ with col_right:
             gauge = {'axis': {'range': [None, 100], 'tickcolor': "#ffffff"}, 'bar': {'color': gauge_color}, 'bgcolor': "#1c2541"}
         ))
         fig.update_layout(paper_bgcolor="#0b132b", height=200, margin=dict(l=20, r=20, t=30, b=10))
-        gauge_placeholder.plotly_chart(fig, width="stretch", key="gauge_chart_manual")
+        gauge_placeholder.plotly_chart(fig, width="stretch", key="gauge_manual")
         
         if current_pred == 1:
             alert_placeholder.markdown('<div class="alert-critical">🚨 INTRUSION DETECTED!<br>Action: Dropping packet and blocking source IP.</div>', unsafe_allow_html=True)
         else:
             alert_placeholder.markdown('<div class="alert-safe">✅ CONNECTION NORMAL<br>Action: Allow traffic.</div>', unsafe_allow_html=True)
+
+# ==========================================
+# DIBUJAR EL RADAR (Al final para que se actualice bien)
+# ==========================================
+fig_radar = go.Figure()
+for r in [0.25, 0.5, 0.75, 1.0]:
+    fig_radar.add_trace(go.Scatterpolar(r=[r]*100, theta=np.linspace(0, 360, 100), mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
+for theta in [0, 90, 180, 270]:
+    fig_radar.add_trace(go.Scatterpolar(r=[0, 1], theta=[theta, theta], mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
+sweep_theta = np.linspace(45, 0, 20).tolist()
+fig_radar.add_trace(go.Scatterpolar(r=[0] + [1]*20, theta=[0] + sweep_theta, fill='toself', fillcolor='rgba(0, 243, 255, 0.15)', line=dict(color='rgba(0, 243, 255, 0)'), showlegend=False))
+fig_radar.add_trace(go.Scatterpolar(r=[0.3, 0.7, 0.5, 0.9, 0.4, 0.8], theta=[45, 120, 200, 280, 330, 15], mode='markers', marker=dict(color='#00ff41', size=[6, 8, 5, 10, 4, 7]), showlegend=False))
+
+if current_pred == 1:
+    fig_radar.add_trace(go.Scatterpolar(r=[0.6, 0.8, 0.4], theta=[150, 220, 300], mode='markers', marker=dict(color='#ff003c', size=[14, 16, 12], symbol='x'), showlegend=False))
+
+fig_radar.update_layout(
+    polar=dict(radialaxis=dict(visible=False, range=[0, 1]), angularaxis=dict(visible=False), bgcolor='#0b132b'),
+    showlegend=False, paper_bgcolor='#0b132b', margin=dict(l=10, r=10, t=10, b=10), height=250
+)
+
+if not (live_btn and model_ready): # Si no es live, dibujamos el radar estático actualizado
+    radar_placeholder.plotly_chart(fig_radar, width="stretch", key="radar_manual_final")
 
 # ==========================================
 # EXPLAINABLE AI (XAI) & SOAR
@@ -204,7 +230,6 @@ if current_pred == 1:
         st.write("Why did the AI flag this? Top contributing features:")
         importances = ids_engine.get_feature_importances()
         
-        # Traducimos los nombres técnicos a nombres legibles
         human_names = {
             'protocol_type_encoded': 'Protocol Type',
             'duration': 'Connection Duration',
@@ -219,7 +244,7 @@ if current_pred == 1:
         
         fig_xai = px.bar(df_imp, x='Importance', y='Feature', orientation='h', color_discrete_sequence=['#8a2be2'])
         fig_xai.update_layout(paper_bgcolor="#0b132b", plot_bgcolor="#1c2541", font_color="#ffffff", height=250, margin=dict(l=10, r=10, t=10, b=10))
-        st.plotly_chart(fig_xai, width="stretch", key="xai_chart")
+        st.plotly_chart(fig_xai, width="stretch", key="xai_chart_final")
         
     with col_soar:
         st.markdown("### 📁 Automated Incident Response (SOAR)")

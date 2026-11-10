@@ -9,7 +9,7 @@ A next-generation Network Intrusion Detection System (NIDS) that uses Machine Le
 
 ## 📸 Tactical Dashboard Preview
 
-![Aegis Sentinel HUD](assets/aegis_hud.png)
+![Aegis Sentinel HUD](assets/aegis.png)
 
 ## 🚨 The Problem & The Solution
 

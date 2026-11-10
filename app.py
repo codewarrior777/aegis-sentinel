@@ -1,6 +1,6 @@
 """
 Aegis-Sentinel: AI Network Intrusion Detection System.
-Tactical Dashboard UI - Flat Neon Blue Theme (No Shadows).
+Tactical Dashboard UI - Flat Neon Blue Theme (Perfect Layout).
 """
 
 import streamlit as st
@@ -20,14 +20,12 @@ flat_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-/* Fondo general oscuro y limpio */
 .stApp {
     background-color: #0b132b;
     color: #ffffff;
     font-family: 'Share Tech Mono', monospace;
 }
 
-/* Título principal nítido */
 h1 {
     color: #00f3ff !important;
     text-transform: uppercase;
@@ -36,13 +34,11 @@ h1 {
     padding-bottom: 10px;
 }
 
-/* Subtítulos nítidos */
 h2, h3 {
     color: #00f3ff !important;
     text-transform: uppercase;
 }
 
-/* Botones planos */
 .stButton > button {
     background-color: #1a3b5c !important;
     color: #ffffff !important;
@@ -59,7 +55,6 @@ h2, h3 {
     color: #000000 !important;
 }
 
-/* Tarjetas de métricas con bordes claros */
 div[data-testid="stMetric"] {
     background-color: #1c2541;
     border: 1px solid #3a506b;
@@ -74,7 +69,6 @@ div[data-testid="stMetricLabel"] {
     color: #ffffff !important;
 }
 
-/* Alertas planas */
 .alert-critical {
     background-color: #3b000a;
     border: 2px solid #ff003c;
@@ -94,7 +88,6 @@ div[data-testid="stMetricLabel"] {
     text-align: center;
 }
 
-/* Terminal Logs nítida */
 .terminal-window {
     background-color: #000000;
     border: 2px solid #3a506b;
@@ -169,7 +162,7 @@ with col_left:
     
     scan_btn = st.button("🚀 INITIATE PACKET INSPECTION", type="primary")
     
-    # Radar Chart nítido
+    # Movemos el Radar aquí, pero le damos altura fija para que no se corte
     st.markdown("### 📡 Network Radar")
     radar_fig = go.Figure(data=go.Scatterpolar(
         r=[1, 1, 1, 1, 1, 1], theta=[0, 60, 120, 180, 240, 300],
@@ -188,7 +181,7 @@ with col_left:
         showlegend=False, 
         paper_bgcolor='#0b132b', 
         margin=dict(l=10, r=10, t=10, b=10), 
-        height=200
+        height=250 # Altura ajustada
     )
     st.plotly_chart(radar_fig, width="stretch")
 

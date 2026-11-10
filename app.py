@@ -1,6 +1,6 @@
 """
 Aegis-Sentinel: AI Network Intrusion Detection System.
-Ultimate God Level - Fixed Gauge Layout.
+Ultimate God Level - Fixed Gauge Centering.
 """
 
 import streamlit as st
@@ -81,18 +81,14 @@ m4.metric("AI Confidence", "99.8%", delta="Optimal")
 st.divider()
 
 # ==========================================
-# LAYOUT
+# FUNCIÓN AUXILIAR PARA LA AGUJA PERFECTA
 # ==========================================
-col_left, col_right = st.columns([1, 1.2], gap="large")
-
-current_pred, current_prob = None, None
-
-# Función auxiliar para crear la aguja perfecta sin desbordarse
 def create_gauge(prob, pred):
     color = "#ff003c" if pred == 1 else "#00f3ff"
     fig = go.Figure(go.Indicator(
         mode = "gauge+number", 
         value = prob * 100,
+        domain = {'x': [0, 1], 'y': [0, 1]}, # <--- ESTO CENTRA EL GRÁFICO
         number = {'font': {'size': 45, 'color': '#ffffff'}},
         title = {'text': "Threat Level (%)", 'font': {'color': '#ffffff', 'size': 16}},
         gauge = {
@@ -108,13 +104,19 @@ def create_gauge(prob, pred):
             ]
         }
     ))
-    # Margen ajustado para que el 100 no se salga
     fig.update_layout(
         paper_bgcolor="#0b132b", 
-        height=200, 
-        margin=dict(l=20, r=20, t=40, b=10)
+        height=220, 
+        margin=dict(l=10, r=10, t=40, b=10)
     )
     return fig
+
+# ==========================================
+# LAYOUT
+# ==========================================
+col_left, col_right = st.columns([1, 1.2], gap="large")
+
+current_pred, current_prob = None, None
 
 with col_left:
     st.markdown("### 📡 Connection Telemetry")
@@ -131,7 +133,6 @@ with col_left:
     with col_btn2:
         live_btn = st.button("⚡ LIVE SIMULATION")
     
-    # Placeholder para el Radar
     st.markdown("### 📡 Network Radar")
     radar_placeholder = st.empty()
 
@@ -172,7 +173,7 @@ with col_right:
                 
             current_pred, current_prob = process_scan(d, s, de, fl, "TCP", c)
             
-            # Radar en vivo
+            # Radar
             fig_radar = go.Figure()
             for r in [0.25, 0.5, 0.75, 1.0]:
                 fig_radar.add_trace(go.Scatterpolar(r=[r]*100, theta=np.linspace(0, 360, 100), mode='lines', line=dict(color='rgba(0, 243, 255, 0.3)', width=1), showlegend=False))
@@ -189,7 +190,7 @@ with col_right:
             )
             radar_placeholder.plotly_chart(fig_radar, width="stretch", key=f"radar_live_{i}")
             
-            # Aguja en vivo (usando la función create_gauge)
+            # Aguja
             fig = create_gauge(current_prob, current_pred)
             gauge_placeholder.plotly_chart(fig, width="stretch", key=f"gauge_live_{i}")
             
